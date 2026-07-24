@@ -33,7 +33,7 @@ jobs:
           for attempt in {1..60}; do
             RUN=$(gh run list \
               --workflow="CI" \
-              --branch=master \
+              --branch=main \
               --commit "$SHA" \
               --json status,conclusion,headSha,url \
               --jq '[.[] | select(.headSha=="'"$SHA"'")] | first // {status:"",conclusion:"",url:""}' \
@@ -57,7 +57,7 @@ jobs:
             sleep 10
           done
 
-          echo "::error::Timed out waiting for CI to complete for $SHA on master."
+          echo "::error::Timed out waiting for CI to complete for $SHA on main."
           exit 1
 
   release:
@@ -113,7 +113,7 @@ jobs:
         run: npm run build
 
       - name: Commit version bump and tag
-        # This clean commit (no build artifacts) is what gets pushed to origin/master.
+        # This clean commit (no build artifacts) is what gets pushed to origin/main.
         # `git add -u` picks up exactly what release-bump.mjs touched — which
         # may or may not include the extension manifests depending on what
         # changed since the previous tag.
@@ -123,7 +123,7 @@ jobs:
           git add -u
           git commit -m "release v${VERSION}"
           git tag "v${VERSION}"
-          git push origin HEAD:master --tags
+          git push origin HEAD:main --tags
 
       - name: Setup SSH for 5apps
         env:
@@ -138,13 +138,13 @@ jobs:
       - name: Deploy to 5apps
         # Force-add build artifacts onto a throwaway deploy branch, extract just
         # the dist/ subtree, and push that to 5apps. The deploy commit is never
-        # pushed to origin — only the clean version-bump commit above reaches master.
+        # pushed to origin — only the clean version-bump commit above reaches main.
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           git remote add 5apps git@5apps.com:silverbucket_inbox-rs.git 2>/dev/null \
             || git remote set-url 5apps git@5apps.com:silverbucket_inbox-rs.git
 
-          # Create a throwaway branch for the deploy commit so master stays clean.
+          # Create a throwaway branch for the deploy commit so main stays clean.
           git checkout -b deploy/v${VERSION}
           git add packages/web/dist -f
           git commit -m "deploy v${VERSION} [skip ci]"
@@ -152,8 +152,8 @@ jobs:
           SPLIT_SHA=$(git subtree split --prefix=packages/web/dist)
           git push 5apps "$SPLIT_SHA":refs/heads/master --force
 
-          # Return to master; the deploy branch is local-only and discarded.
-          git checkout master
+          # Return to main; the deploy branch is local-only and discarded.
+          git checkout main
 
       - name: Create GitHub Release
         env:
