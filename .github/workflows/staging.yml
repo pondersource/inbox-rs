@@ -5,7 +5,7 @@ name: Deploy to Staging
 #
 # Unlike release.yml this does NOT bump versions, tag, push to origin, or cut a
 # GitHub Release — it only builds the selected branch and ships the built
-# artifacts to the staging remote. Nothing about origin/master is touched.
+# artifacts to the staging remote. Nothing about origin/main is touched.
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ on:
         description: Branch to build and deploy to staging
         required: true
         type: string
-        default: master
+        default: main
 
 permissions:
   contents: read
