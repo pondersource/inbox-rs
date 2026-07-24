@@ -15,15 +15,7 @@ const { version } = JSON.parse(
 // help. Production builds leave both off — nothing here changes for them.
 const isStaging = process.env.STAGING_BUILD === '1';
 
-// The 5apps deploys serve the app from the domain root, so `base` defaults
-// to '/'. The GitHub Pages workflow (.github/workflows/pages.yml) serves it
-// from a /<repo>/ project-page subpath instead, and sets GH_PAGES_BASE so
-// the built HTML/asset references (and the PWA precache manifest) resolve
-// correctly there.
-const base = process.env.GH_PAGES_BASE || '/';
-
 export default defineConfig({
-  base,
   plugins: [
     svelte(),
     VitePWA({
@@ -42,19 +34,17 @@ export default defineConfig({
       ],
       workbox: {
         additionalManifestEntries: [
-          { url: base, revision: version },
-          { url: `${base}capture/`, revision: version },
+          { url: '/', revision: version },
+          { url: '/capture/', revision: version },
         ],
         cleanupOutdatedCaches: true,
-        navigateFallback: `${base}index.html`,
+        navigateFallback: '/index.html',
         // The quick-capture app is its own shell (capture/index.html). Without
         // this, any /capture/ navigation that isn't an exact precache match
         // (query params from OAuth redirects or a future share_target, sub-
         // paths) falls through to the MAIN app's index.html and boots the
         // wrong app inside the capture PWA window.
-        navigateFallbackDenylist: [
-          new RegExp(`^${base.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}capture/`),
-        ],
+        navigateFallbackDenylist: [/^\/capture\//],
         globPatterns: ['**/*.{js,css,html,png,svg,webmanifest,wasm}'],
         globIgnores: [
           'ml/**/*',

@@ -1,12 +1,16 @@
 name: Deploy to GitHub Pages
 
-# Builds the web app from `main` and publishes it to GitHub Pages. This is
-# separate from release.yml (which deploys the production site to 5apps on
-# a manual version bump) — Pages tracks `main` directly so it's always a
-# live preview of the latest commit.
+# Builds the web app from `main` and publishes it to GitHub Pages, served at
+# the custom domain inbox-rs.pondersource.com. This is separate from
+# release.yml (which deploys the production site to 5apps on a manual version
+# bump) — Pages tracks `main` directly so it's always a live preview of the
+# latest commit.
 #
-# One-time setup required in the repo: Settings > Pages > Build and
-# deployment > Source: "GitHub Actions".
+# One-time setup required in the repo (not done by this workflow):
+#   - DNS: a CNAME record for inbox-rs.pondersource.com pointing at
+#     pondersource.github.io.
+#   - Settings > Pages > Build and deployment > Source: "GitHub Actions".
+#   - Settings > Pages > Custom domain: inbox-rs.pondersource.com.
 
 on:
   push:
@@ -48,12 +52,15 @@ jobs:
             ${{ runner.os }}-transcription-assets-
 
       - name: Build web app
-        # Project Pages sites are served from /<repo>/, not the domain root,
-        # so asset/HTML references and the PWA precache manifest need that
-        # base baked in (see packages/web/vite.config.ts).
-        env:
-          GH_PAGES_BASE: /${{ github.event.repository.name }}/
         run: npm run build
+
+      - name: Add custom domain CNAME
+        # Required for GitHub Pages to serve the custom domain when the site
+        # is published via the Actions deployment method (unlike the "deploy
+        # from a branch" method, it won't infer this from the Settings UI
+        # alone). Scoped to this workflow's own copy of dist/ rather than
+        # packages/web/public/ so it doesn't leak into the 5apps dist output.
+        run: echo "inbox-rs.pondersource.com" > packages/web/dist/CNAME
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
