@@ -29,7 +29,7 @@
     "highlight.js": "^11.11.1",
     "lowlight": "^3.3.0",
     "marked": "^17.0.5",
-    "onnxruntime-web": "^1.14.0",
+    "onnxruntime-web": "1.14.0",
     "remotestorage-module-shares": "^2.1.4",
     "remotestoragejs": "^2.0.0-beta.9",
     "svelte-dnd-action": "^0.9.69",

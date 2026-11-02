@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import { copyFile, mkdir, readFile, stat, writeFile } from 'node:fs/promises';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -81,7 +82,15 @@ const ORT_WASM_ASSETS = [
 const publicRoot = path.join(repoRoot, 'packages/web/public/ml');
 const modelRoot = path.join(publicRoot, 'models', MODEL_ID);
 const ortRoot = path.join(publicRoot, 'onnxruntime');
-const ortSourceRoot = path.join(repoRoot, 'node_modules/onnxruntime-web/dist');
+// Resolve from the consumer workspace: npm may keep this dependency nested
+// instead of hoisting it into the repository's node_modules directory.
+const webRequire = createRequire(
+  path.join(repoRoot, 'packages/web/package.json'),
+);
+const ortSourceRoot = path.join(
+  path.dirname(webRequire.resolve('onnxruntime-web/package.json')),
+  'dist',
+);
 const modelBaseUrl = `https://huggingface.co/${MODEL_ID}/resolve/${MODEL_REVISION}`;
 const forceRefresh =
   process.argv.includes('--refresh') ||
