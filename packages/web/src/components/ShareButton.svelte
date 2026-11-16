@@ -43,6 +43,9 @@
     shareState = 'sharing';
 
     try {
+      if (rs.backend === 'googledrive') {
+        throw new Error('Public sharing is not supported by the Google Drive backend');
+      }
       const shares = rs.shares;
 
       // PUT directly to remote, bypassing shares.storeFile() which has a
@@ -62,7 +65,8 @@
       const filePutPath = `/public/shares/${shareName}`;
       await remote.put(filePutPath, file.data, resolvedMime);
 
-      const shareUrl = remote.href + filePutPath;
+      const shareUrl = await rs.scope('/public/shares/').getItemURL(shareName);
+      if (!shareUrl) throw new Error('No public sharing URL available');
       publicUrl = shareUrl;
       shareState = 'done';
       saveSharedUrl(filePath, shareUrl);
@@ -100,7 +104,8 @@
       type="button"
       class="btn-share"
       onclick={share}
-      disabled={shareState === 'sharing'}
+      disabled={shareState === 'sharing' || rs.backend === 'googledrive'}
+      title={rs.backend === 'googledrive' ? 'Public sharing is unavailable with Google Drive' : undefined}
     >
       {#if shareState === 'sharing'}
         Saving...

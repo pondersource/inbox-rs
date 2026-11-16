@@ -98,3 +98,21 @@ when their bundle changed since the previous tag — see
 ## License
 
 GPL-3.0
+
+
+## PonderSource storage providers
+
+Public OAuth application identifiers are configured in `packages/web/src/lib/storage-providers.ts`. These are
+client IDs/app keys, never client secrets. The shared PonderSource Dropbox
+registration uses an app folder so these apps can share their remoteStorage data.
+Google Drive can sync private data, but rs.js does not support public sharing URLs for that backend.
+
+Register the exact app origin (without a trailing slash) as the OAuth callback.
+Hyperdraft uses `https://hyperdraft.pondersource.com/write/` instead. Apps with
+nested routes return to their registered callback before starting provider sign-in.
+
+The PonderSource Google OAuth project is `pondersource-apps`. It currently runs
+in Testing mode with `michiel@unhosted.org` as a test user; public availability
+requires completing the consent branding and Google verification requirements.
+The Dropbox app is **PonderSource Apps** (app key `gaezgoax9khjilj`), with
+additional users enabled in development mode (up to 500 users).

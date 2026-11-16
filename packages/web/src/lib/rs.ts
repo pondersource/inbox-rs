@@ -4,6 +4,7 @@ import InboxModule, {
 } from '@inbox-rs/rs-module';
 import SharesModule from 'remotestorage-module-shares';
 import RemoteStorage from 'remotestoragejs';
+import { storageApiKeys } from './storage-providers';
 
 /**
  * Shape of the remoteStorage instance once our modules are loaded.
@@ -333,6 +334,7 @@ const rs = new RemoteStorage({
   changeEvents: { local: true, window: false, remote: true, conflict: true },
 }) as RSWithModules;
 
+rs.setApiKeys(storageApiKeys);
 rs.access.claim('inbox', 'rw');
 rs.access.claim('shares', 'rw');
 rs.caching.enable('/inbox/');
@@ -404,8 +406,34 @@ export async function fetchFileBlobUrl(
   expectedMimeType?: string,
 ): Promise<string | null> {
   const remote = rs.remote;
+  if (rs.backend !== 'remotestorage') {
+    if (!remote?.connected) return null;
+    return fetchProviderFileBlobUrl(rs.inbox, path, expectedMimeType);
+  }
   if (!remote?.href || !remote?.token) return null;
   return fetchFileWithAuth(remote.href, remote.token, path, expectedMimeType);
+}
+
+/** Read provider files through rs.js; provider tokens must never go to an RS URL. */
+export async function fetchProviderFileBlobUrl(
+  client: Pick<RSWithModules['inbox'], 'getFile'>,
+  path: string,
+  expectedMimeType?: string,
+): Promise<string | null> {
+  try {
+    const file = await client.getFile(path);
+    if (!file) return null;
+    const type = (
+      expectedMimeType ||
+      file.mimeType ||
+      'application/octet-stream'
+    )
+      .split(';')[0]
+      .trim();
+    return URL.createObjectURL(new Blob([file.data], { type }));
+  } catch {
+    return null;
+  }
 }
 
 export default rs;

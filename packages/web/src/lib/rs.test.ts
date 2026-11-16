@@ -18,7 +18,7 @@ vi.stubGlobal('URL', {
 });
 
 import { recoverLegacyBinaryStringEncoding } from '@inbox-rs/rs-module';
-import { fetchFileWithAuth } from './rs';
+import { fetchFileWithAuth, fetchProviderFileBlobUrl } from './rs';
 
 /**
  * Encode bytes the way the v1.8-and-earlier upload path did:
@@ -327,5 +327,39 @@ describe('recoverLegacyBinaryStringEncoding', () => {
       ),
     );
     expect(new Uint8Array(result)).toEqual(original);
+  });
+});
+
+describe('provider file reads', () => {
+  it('reads through the provider client without forwarding tokens to an RS URL', async () => {
+    mockFetch.mockClear();
+    const bytes = new Uint8Array([0, 128, 255]).buffer;
+    const client = {
+      getFile: vi.fn().mockResolvedValue({
+        data: bytes,
+        mimeType: 'image/png; charset=binary',
+      }),
+    };
+    const url = await fetchProviderFileBlobUrl(client, 'files/example.png');
+    expect(client.getFile).toHaveBeenCalledWith('files/example.png');
+    expect(mockFetch).not.toHaveBeenCalled();
+    expect(url).toMatch(/^blob:test\//);
+    expect(lastCreatedBlob?.type).toBe('image/png');
+    expect(lastCreatedBlob?.size).toBe(3);
+  });
+
+  it('returns no URL for missing provider files or provider failures', async () => {
+    expect(
+      await fetchProviderFileBlobUrl(
+        { getFile: vi.fn().mockResolvedValue(undefined) },
+        'missing',
+      ),
+    ).toBeNull();
+    expect(
+      await fetchProviderFileBlobUrl(
+        { getFile: vi.fn().mockRejectedValue(new Error('offline')) },
+        'missing',
+      ),
+    ).toBeNull();
   });
 });

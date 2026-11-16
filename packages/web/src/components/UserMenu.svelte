@@ -2,6 +2,7 @@
   import type { Component } from 'svelte';
   import { tick } from 'svelte';
   import rs from '../lib/rs';
+  import { storageApiKeys } from '../lib/storage-providers';
   import { bulkEnrichProgress, enrichAllBookmarks } from '../lib/enrich';
   import { DEFAULT_SOCKETHUB_ENDPOINT } from '../lib/link-metadata';
   import { connected, syncing, userAddress, userSettings, updateUserSettings } from '../lib/stores';
@@ -131,6 +132,16 @@
       rs.connect(inputAddress.trim());
     } catch {
       connecting = false;
+    }
+  }
+
+  async function connectProvider(provider: 'googledrive' | 'dropbox') {
+    connecting = true;
+    try {
+      await rs[provider].connect();
+    } catch (error) {
+      connecting = false;
+      showToast(error instanceof Error ? error.message : 'Could not connect');
     }
   }
 
@@ -351,6 +362,14 @@
             {connecting ? 'Connecting…' : 'Connect'}
           </button>
         </form>
+        {#each [['googledrive', 'Google Drive'], ['dropbox', 'Dropbox']] as [provider, label]}
+          {#if storageApiKeys[provider as 'googledrive' | 'dropbox']}
+            <button type="button" class="menu-item" role="menuitem" disabled={connecting}
+              onclick={() => connectProvider(provider as 'googledrive' | 'dropbox')}>
+              Connect {label}
+            </button>
+          {/if}
+        {/each}
       {/if}
 
       {#if $connected}

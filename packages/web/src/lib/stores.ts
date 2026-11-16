@@ -64,9 +64,12 @@ export const syncing = writable(false);
 function readStoredUserAddress(): string {
   try {
     // remoteStorage.js persists the user address in this key
-    const settings = JSON.parse(
-      localStorage.getItem('remotestorage:wireclient') ?? '{}',
-    );
+    const backend = localStorage.getItem('remotestorage:backend');
+    const settingsKey =
+      backend === 'googledrive' || backend === 'dropbox'
+        ? `remotestorage:${backend}`
+        : 'remotestorage:wireclient';
+    const settings = JSON.parse(localStorage.getItem(settingsKey) ?? '{}');
     return (
       settings?.userAddress ??
       localStorage.getItem('inbox-rs:userAddress') ??
