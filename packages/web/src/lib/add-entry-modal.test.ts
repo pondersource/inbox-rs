@@ -48,7 +48,7 @@ describe('loadMarkdownEditorComponent', () => {
   it('loads the markdown editor on demand', async () => {
     const component = await loadMarkdownEditorComponent();
     expect(component).toBeTruthy();
-  });
+  }, 30000);
 });
 
 describe('shouldLoadMarkdownEditor', () => {

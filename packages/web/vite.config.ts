@@ -33,10 +33,10 @@ export default defineConfig({
         'icon-512-maskable.png',
       ],
       workbox: {
-        additionalManifestEntries: [
-          { url: '/', revision: version },
-          { url: '/capture/', revision: version },
-        ],
+        // Workbox maps directory URLs to their precached index.html entries.
+        // Keep their content-hash revisions: package versions can stay the same
+        // across deployments, leaving version-keyed aliases on an old shell.
+        directoryIndex: 'index.html',
         cleanupOutdatedCaches: true,
         navigateFallback: '/index.html',
         // The quick-capture app is its own shell (capture/index.html). Without
