@@ -24,7 +24,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "remotestoragejs": "file:../../vendor/remotestoragejs-2.0.0-beta.10-pondersource.3.tgz",
+    "remotestoragejs": "file:../../vendor/remotestoragejs-2.0.0-beta.10-pondersource.4.tgz",
     "rs-migrate": "^1.0.2"
   },
   "devDependencies": {

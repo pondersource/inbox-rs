@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@inbox-rs/rs-module": "*",
-    "remotestoragejs": "file:../../vendor/remotestoragejs-2.0.0-beta.10-pondersource.3.tgz",
+    "remotestoragejs": "file:../../vendor/remotestoragejs-2.0.0-beta.10-pondersource.4.tgz",
     "webextension-polyfill": "^0.12.0"
   },
   "devDependencies": {
