@@ -7,15 +7,16 @@
  * silent — a single eager import of a heavy module can quietly re-inflate it.
  * Run after `vite build` in packages/web.
  *
- * Budget rationale: after excluding the lazy transformers/MarkdownEditor
- * chunks the precache sits around 0.9 MB; 1.2 MB leaves headroom for normal
- * growth while still catching a heavyweight regression.
+ * Budget rationale: the Solid-enabled rs.js build includes its authentication
+ * and pod SDKs, bringing the app shell to about 1.5 MiB. A 1.7 MiB budget
+ * covers those required offline dependencies while still catching accidental
+ * precaching of the lazy transformers/MarkdownEditor chunks.
  */
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const BUDGET_BYTES = 1.2 * 1024 * 1024;
+const BUDGET_BYTES = 1.7 * 1024 * 1024;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const swPath = path.resolve(__dirname, '../packages/web/dist/sw.js');
