@@ -34,7 +34,8 @@
     "remotestoragejs": "file:../../vendor/remotestoragejs-2.0.0-beta.10-pondersource.6.tgz",
     "svelte-dnd-action": "^0.9.69",
     "tiptap-markdown": "^0.9.0",
-    "@pondersource/rs-apps": "file:../../vendor/pondersource-rs-apps-1.0.0.tgz"
+    "@pondersource/rs-apps": "file:../../vendor/pondersource-rs-apps-1.0.0.tgz",
+    "remotestorage-widget": "file:../../vendor/remotestorage-widget-1.8.2-pondersource.1.tgz"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^5.0.0",

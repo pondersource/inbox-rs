@@ -2,7 +2,7 @@
   import type { Component } from 'svelte';
   import { tick } from 'svelte';
   import rs from '../lib/rs';
-  import { storageApiKeys } from '../lib/storage-providers';
+  import Widget from 'remotestorage-widget';
   import { bulkEnrichProgress, enrichAllBookmarks } from '../lib/enrich';
   import { DEFAULT_SOCKETHUB_ENDPOINT } from '../lib/link-metadata';
   import { connected, syncing, userAddress, userSettings, updateUserSettings } from '../lib/stores';
@@ -26,12 +26,9 @@
   >;
 
   let open = $state(false);
-  let inputAddress = $state('');
-  let connecting = $state(false);
   let editingAbbrev = $state(false);
   let abbrevInput = $state('');
   let abbrevInputEl = $state<HTMLInputElement | null>(null);
-  let connectInputEl = $state<HTMLInputElement | null>(null);
   let ImportExportModalComponent = $state<LazyComponent | null>(null);
   let importExportModal = $state<{ startExport: () => void; promptImport: (file: File) => void } | null>(null);
   let importExportOpen = $state(false);
@@ -90,15 +87,21 @@
     open = !open;
   }
 
-  async function focusConnectInput() {
-    if ($connected) return;
-    await tick();
-    connectInputEl?.focus();
+  let storageWidget: Widget | undefined;
+  // biome-ignore lint/correctness/noUnusedVariables: Used by the Svelte action below.
+  function mountStorageWidget(element: HTMLElement) {
+    storageWidget = new Widget(rs, { solidProviders: { allowAnyProvider: true }, skipInitial: true, leaveOpen: true, modalBackdrop: false });
+    storageWidget.attach(element);
+    const reveal = () => { open = true; };
+    rs.on('pod-not-selected', reveal);
+    rs.on('error', reveal);
+    return { destroy() { rs.removeEventListener('pod-not-selected', reveal); rs.removeEventListener('error', reveal); storageWidget?.destroy(); storageWidget = undefined; } };
   }
 
   export async function openConnectMenu() {
     open = true;
-    await focusConnectInput();
+    await tick();
+    storageWidget?.open();
   }
 
   function closeMenu(e: MouseEvent) {
@@ -116,48 +119,12 @@
     if (open) {
       document.addEventListener('click', closeMenu, true);
       document.addEventListener('keydown', handleKeydown, true);
-      void focusConnectInput();
+
     }
     return () => {
       document.removeEventListener('click', closeMenu, true);
       document.removeEventListener('keydown', handleKeydown, true);
     };
-  });
-
-  async function handleConnect() {
-    if (!inputAddress.trim()) return;
-    connecting = true;
-    try {
-      localStorage.setItem('inbox-rs:userAddress', inputAddress.trim());
-      rs.connect(inputAddress.trim());
-    } catch {
-      connecting = false;
-    }
-  }
-
-  async function connectProvider(provider: 'googledrive' | 'dropbox') {
-    connecting = true;
-    try {
-      await rs[provider].connect();
-    } catch (error) {
-      connecting = false;
-      showToast(error instanceof Error ? error.message : 'Could not connect');
-    }
-  }
-
-  function handleDisconnect() {
-    rs.disconnect();
-    open = false;
-  }
-
-  $effect(() => {
-    if ($connected) connecting = false;
-  });
-
-  $effect(() => {
-    if (!$connected && !inputAddress && $userAddress) {
-      inputAddress = $userAddress;
-    }
   });
 
   const atIdx = $derived($userAddress.indexOf('@'));
@@ -286,8 +253,7 @@
     </svg>
   </button>
 
-  {#if open}
-    <div class="dropdown" role="menu">
+    <div class="dropdown" role="menu" hidden={!open}>
       <!-- Connection status -->
       {#if $connected}
         <div class="user-info">
@@ -336,41 +302,8 @@
           {/if}
         </div>
 
-        <button type="button" class="menu-item danger" role="menuitem" onclick={handleDisconnect}>
-          <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-            <polyline points="16 17 21 12 16 7"></polyline>
-            <line x1="21" y1="12" x2="9" y2="12"></line>
-          </svg>
-          Disconnect
-        </button>
-      {:else}
-        <div class="section-label">Connection</div>
-        <div class="status-row">
-          <span class="status-dot"></span>
-          <span class="status-label">Not connected</span>
-        </div>
-        <form class="connect-form" onsubmit={(e) => { e.preventDefault(); handleConnect(); }}>
-          <input
-            type="text"
-            bind:this={connectInputEl}
-            bind:value={inputAddress}
-            placeholder="user@storage.example"
-            disabled={connecting}
-          />
-          <button type="submit" class="btn-connect" disabled={connecting || !inputAddress.trim()}>
-            {connecting ? 'Connecting…' : 'Connect'}
-          </button>
-        </form>
-        {#each [['googledrive', 'Google Drive'], ['dropbox', 'Dropbox']] as [provider, label]}
-          {#if storageApiKeys[provider as 'googledrive' | 'dropbox']}
-            <button type="button" class="menu-item" role="menuitem" disabled={connecting}
-              onclick={() => connectProvider(provider as 'googledrive' | 'dropbox')}>
-              Connect {label}
-            </button>
-          {/if}
-        {/each}
       {/if}
+      <div class="storage-widget" use:mountStorageWidget></div>
 
       {#if $connected}
         <div class="divider"></div>
@@ -572,7 +505,6 @@
         {/each}
       </div>
     </div>
-  {/if}
 </div>
 
 {#if ImportExportModalComponent}
@@ -580,6 +512,9 @@
 {/if}
 
 <style>
+  .dropdown[hidden] { display: none; }
+  .storage-widget :global(.rs-widget) { position: relative; top: auto; right: auto; margin: 0; }
+  .storage-widget { min-width: 280px; }
   .user-menu {
     position: relative;
   }

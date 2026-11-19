@@ -38,6 +38,7 @@ export default defineConfig({
   expect: { timeout: 10_000 },
   use: {
     baseURL: WEB_ORIGIN,
+    launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH },
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',

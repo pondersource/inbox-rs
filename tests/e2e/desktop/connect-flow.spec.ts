@@ -28,7 +28,8 @@ test('full connect round-trip via OAuth', async ({
 
   // Type the RS address and submit. The form's submit button reads
   // "Connect" until in-flight, then "Connecting…".
-  await page.getByPlaceholder('user@storage.example').fill(rsUser.address);
+  await page.locator('.rs-choose-rs').click();
+  await page.locator('[name=rs-user-address]').fill(rsUser.address);
   // `exact: true` so we don't accidentally select the User-menu trigger
   // button, whose accessible name contains the substring "Connect".
   await page.getByRole('button', { name: 'Connect', exact: true }).click();
@@ -75,7 +76,9 @@ test('disconnect returns to empty state', async ({
   await connectedPage
     .getByRole('button', { name: 'User menu — connected' })
     .click();
-  await connectedPage.getByRole('menuitem', { name: 'Disconnect' }).click();
+  await connectedPage
+    .getByRole('button', { name: 'Disconnect', exact: true })
+    .click();
 
   await expect(
     connectedPage.getByRole('button', {

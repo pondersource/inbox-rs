@@ -20,7 +20,9 @@ test('tap opens the user menu', async ({ page, webOrigin }) => {
 
   await page.getByRole('button', { name: 'User menu — disconnected' }).tap();
 
-  await expect(page.getByPlaceholder('user@storage.example')).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Solid', exact: true }),
+  ).toBeVisible();
 });
 
 test('tap navigates between pages', async ({ connectedPage, webOrigin }) => {

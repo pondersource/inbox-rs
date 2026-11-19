@@ -1,5 +1,5 @@
 import InboxModule, { type InboxModuleExports } from '@inbox-rs/rs-module';
-import { attachSolid, withPublicLinks } from '@pondersource/rs-apps';
+import { withPublicLinks } from '@pondersource/rs-apps';
 import SharesModule from 'remotestorage-module-shares';
 import RemoteStorage from 'remotestoragejs';
 import { storageApiKeys } from './storage-providers';
@@ -339,7 +339,7 @@ const rs = new RemoteStorage({
 }) as RSWithModules;
 
 rs.setApiKeys(storageApiKeys);
-attachSolid(rs);
+
 rs.access.claim('inbox', 'rw');
 rs.access.claim('shares', 'rw');
 rs.caching.enable('/inbox/');
