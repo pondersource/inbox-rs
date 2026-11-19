@@ -43,15 +43,9 @@
     shareState = 'sharing';
 
     try {
-      if (rs.backend === 'googledrive') {
-        throw new Error('Public sharing is not supported by the Google Drive backend');
-      }
       const shares = rs.shares;
 
-      // PUT directly to remote, bypassing shares.storeFile() which has a
-      // thumbnail bug (reads Image dimensions before onload → 0×0 canvas throw).
-      const remote = rs.remote;
-      if (!remote?.connected) throw new Error('Not connected to remote storage');
+      if (!rs.connected) throw new Error('Not connected to remote storage');
 
       // Read file via RS inbox module
       const file = await rs.inbox.getFile(filePath);
@@ -62,10 +56,9 @@
       const uid = Math.random().toString(36).slice(2, 8);
       const shareName = `${shares._formattedDate(new Date())}-${uid}${ext}`;
 
-      const filePutPath = `/public/shares/${shareName}`;
-      await remote.put(filePutPath, file.data, resolvedMime);
+      await shares.putFile(shareName, file.data, resolvedMime);
 
-      const shareUrl = await rs.scope('/public/shares/').getItemURL(shareName);
+      const shareUrl = await rs.shares.getItemURL(shareName);
       if (!shareUrl) throw new Error('No public sharing URL available');
       publicUrl = shareUrl;
       shareState = 'done';
@@ -104,8 +97,7 @@
       type="button"
       class="btn-share"
       onclick={share}
-      disabled={shareState === 'sharing' || rs.backend === 'googledrive'}
-      title={rs.backend === 'googledrive' ? 'Public sharing is unavailable with Google Drive' : undefined}
+      disabled={shareState === 'sharing'}
     >
       {#if shareState === 'sharing'}
         Saving...

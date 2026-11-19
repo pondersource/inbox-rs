@@ -811,7 +811,7 @@ async function resolveFileBlobUrl(
   // (`recoverLegacyBinaryStringEncoding` only reverses the lossless legacy
   // shapes), so a device that never *wrote* the file itself — i.e. any device
   // other than the one that captured it — would render a broken image from
-  // cache. `fetchFileWithAuth` reads the raw response bytes and is always
+  // cache. The repaired rs.js binary decoder preserves the bytes. Module reads are
   // faithful. The extra fetch is deduped within a session by the in-memory
   // `blobUrls` LRU cache, so a given path is only fetched once per session.
   if (get(connected)) {

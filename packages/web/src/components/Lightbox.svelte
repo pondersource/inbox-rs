@@ -152,17 +152,9 @@
     shareState = 'sharing';
 
     try {
-      if (rs.backend === 'googledrive') {
-        throw new Error('Public sharing is not supported by the Google Drive backend');
-      }
       const shares = rs.shares;
 
-      // PUT directly to remote, bypassing the sync layer entirely.
-      // Two reasons: (1) shares module has a sync thumbnail bug that throws
-      // because it reads Image dimensions before onload, and (2) the sync
-      // layer silently fails to push binary file data (same RS bug as inbox files).
-      const remote = rs.remote;
-      if (!remote?.connected) throw new Error('Not connected to remote storage');
+      if (!rs.connected) throw new Error('Not connected to remote storage');
 
       let data: ArrayBuffer;
       let mime: string;
@@ -187,19 +179,18 @@
         isRedirect = true;
       }
 
-      const filePutPath = `/public/shares/${shareName}`;
-      await remote.put(filePutPath, data, mime);
+      await shares.putFile(shareName, data, mime);
 
       // Generate and upload thumbnail directly if it's an image
       if (!isRedirect && shares._isImage(mime)) {
         try {
-          await generateThumbnail(data, mime, shareName, remote);
+          await generateThumbnail(data, mime, shareName, shares);
         } catch {
           // Thumbnail failure is non-critical
         }
       }
 
-      const shareUrl = await rs.scope('/public/shares/').getItemURL(shareName);
+      const shareUrl = await rs.shares.getItemURL(shareName);
       if (!shareUrl) throw new Error('No public sharing URL available');
       publicUrl = shareUrl;
       shareState = 'done';
@@ -212,7 +203,7 @@
   }
 
   async function generateThumbnail(
-    data: ArrayBuffer, mime: string, name: string, remote: RSWithModules['remote']
+    data: ArrayBuffer, mime: string, name: string, shares: RSWithModules['shares']
   ) {
     const blob = new Blob([data], { type: mime });
     const url = URL.createObjectURL(blob);
@@ -241,7 +232,7 @@
         canvas.toBlob(b => b ? resolve(b) : reject(), 'image/png');
       });
       const thumbData = await thumbBlob.arrayBuffer();
-      await remote.put(`/public/shares/thumbnails/${name}.png`, thumbData, 'image/png');
+      await shares.putFile(`thumbnails/${name}.png`, thumbData, 'image/png');
     } finally {
       URL.revokeObjectURL(url);
     }
@@ -283,8 +274,8 @@
         <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
         Save to
       </span>
-      <button type="button" class="toolbar-btn" onclick={share} disabled={shareState === 'sharing' || rs.backend === 'googledrive'}
-      title={rs.backend === 'googledrive' ? 'Public sharing is unavailable with Google Drive' : undefined}>
+      <button type="button" class="toolbar-btn" onclick={share} disabled={shareState === 'sharing'}
+      >
         {#if shareState === 'sharing'}
           Saving...
         {:else if shareState === 'error'}

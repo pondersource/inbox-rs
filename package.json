@@ -24,5 +24,9 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.13"
+  },
+  "dependencies": {
+    "@pondersource/rs-apps": "file:vendor/pondersource-rs-apps-1.0.0.tgz",
+    "remotestoragejs": "file:vendor/remotestoragejs-2.0.0-beta.10-pondersource.6.tgz"
   }
 }
