@@ -8,9 +8,9 @@
  * Run after `vite build` in packages/web.
  *
  * Budget rationale: the all-backend rs.js/widget preview includes the Solid,
- * LWS, OneDrive and NextGraph SDKs in the offline app shell. Its measured
- * precache is 2060 KiB (including the 1101 KiB stores chunk). A 2.25 MiB cap
- * leaves about 244 KiB for shell changes, while still rejecting either the
+ * LWS, OneDrive and NextGraph SDKs in the offline app shell. The initial preview
+ * precache was 2060 KiB (including the 1101 KiB stores chunk). The unchanged
+ * 2.25 MiB cap initially left about 244 KiB for shell changes, while rejecting
  * lazy transformers or MarkdownEditor chunk being accidentally precached.
  * Keep the storage shell cached so guest data and provider selection work
  * offline; do not exclude the stores chunk to satisfy this guard.

@@ -1,5 +1,9 @@
-Google Drive repair build
-=========================
+# Historical Google Drive repair archive
+
+This note records the retained `remotestoragejs-2.0.0-beta.10-pondersource.4.tgz`
+archive. Current app dependencies use the distribution documented in
+[storage-preview.md](storage-preview.md); the source and validation below are
+historical provenance for that older archive.
 
 Source: https://github.com/remotestorage/remotestorage.js/commit/b7b4ce66ab4bbb41ee04b199027a80fbd2ac9212
 Upstream review: https://github.com/remotestorage/remotestorage.js/pull/1436

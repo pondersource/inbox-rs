@@ -1,0 +1,25 @@
+{
+  "status": "experimental Ponder Source fork distribution",
+  "packages": {
+    "core": {
+      "archive": "remotestoragejs-2.0.0-beta.10-pondersource.7-preview.6.tgz",
+      "version": "2.0.0-beta.10-pondersource.7-preview.6",
+      "archiveSha256": "7233726e69373aad58d67996607a3e3e90ece9ed5e2f5fe793c21f9d65736da3",
+      "sourceCommit": "27fda517eceda07c3a2df085a129ddd531272993",
+      "sourceSha256": "24759f5b278cfcf60677e01277f4b441e35f31f77852f7739a95035f305eaa48",
+      "bundle": "release/remotestorage.js",
+      "bundleSha256": "9e3d17d894765cb9eca44264ee700b8182f06f50a80139f19ca0599e178762db",
+      "bundleBytes": 1090296
+    },
+    "widget": {
+      "archive": "remotestorage-widget-1.8.2-pondersource.2-preview.6.tgz",
+      "version": "1.8.2-pondersource.2-preview.6",
+      "archiveSha256": "eafb7f42f449e6fc50e9d717284eee7fabb3dd89d54a09783b44812e30f95b05",
+      "sourceCommit": "045c78cd752593e58fffed7386ddcbb4ba74dd2e",
+      "sourceSha256": "40bb0fb37ff5a39db1f97adf373de3e4a5c382fba979f402ef77b080e291a076",
+      "bundle": "build/widget.js",
+      "bundleSha256": "7a070705f828684e16de500610ed8874c1c8943e8416e87babb7b6a810340bb6",
+      "bundleBytes": 112300
+    }
+  }
+}
