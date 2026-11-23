@@ -2,24 +2,24 @@
   "status": "experimental Ponder Source fork distribution",
   "packages": {
     "core": {
-      "archive": "remotestoragejs-2.0.0-beta.10-pondersource.7-preview.6.tgz",
-      "version": "2.0.0-beta.10-pondersource.7-preview.6",
-      "archiveSha256": "7233726e69373aad58d67996607a3e3e90ece9ed5e2f5fe793c21f9d65736da3",
-      "sourceCommit": "27fda517eceda07c3a2df085a129ddd531272993",
-      "sourceSha256": "24759f5b278cfcf60677e01277f4b441e35f31f77852f7739a95035f305eaa48",
+      "archive": "remotestoragejs-2.0.0-beta.10-pondersource.8-preview.7.tgz",
+      "version": "2.0.0-beta.10-pondersource.8-preview.7",
+      "archiveSha256": "2ccfce4f0a50926fedfca947c9f9f52c29b77e970dcc144cb3c4d980b7e356db",
+      "sourceCommit": "2517fe04cd66f27c430ec451167efd6b0c73393d",
+      "sourceSha256": "67bf44adbf3eec91ade3be0a47b30f5dc620433437d04ea8c9df8d7cd00a96ae",
       "bundle": "release/remotestorage.js",
-      "bundleSha256": "9e3d17d894765cb9eca44264ee700b8182f06f50a80139f19ca0599e178762db",
-      "bundleBytes": 1090296
+      "bundleSha256": "b38d6acff0ad303b0ec484e52781a528c3bbd21cea4efce3f51013d440e88030",
+      "bundleBytes": 1104330
     },
     "widget": {
-      "archive": "remotestorage-widget-1.8.2-pondersource.2-preview.6.tgz",
-      "version": "1.8.2-pondersource.2-preview.6",
-      "archiveSha256": "eafb7f42f449e6fc50e9d717284eee7fabb3dd89d54a09783b44812e30f95b05",
-      "sourceCommit": "045c78cd752593e58fffed7386ddcbb4ba74dd2e",
-      "sourceSha256": "40bb0fb37ff5a39db1f97adf373de3e4a5c382fba979f402ef77b080e291a076",
+      "archive": "remotestorage-widget-1.8.2-pondersource.3-preview.7.tgz",
+      "version": "1.8.2-pondersource.3-preview.7",
+      "archiveSha256": "62f3dd6c4efe0e5bcea4a8a79edb16f7dcd6cbb35660b088b444a225167440e0",
+      "sourceCommit": "18a22cf75e54bef68620c7e6968b38fc3e4c20bf",
+      "sourceSha256": "e388a84a7b15d792a19ec1373f013681b2191ec1ac53e408800c3c7da44b5540",
       "bundle": "build/widget.js",
-      "bundleSha256": "7a070705f828684e16de500610ed8874c1c8943e8416e87babb7b6a810340bb6",
-      "bundleBytes": 112300
+      "bundleSha256": "ba56426df06e42c218cde6f3e2d108229d1c18f190c078aa424c50d4960ed417",
+      "bundleBytes": 113474
     }
   }
 }
