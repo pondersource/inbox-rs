@@ -52,7 +52,9 @@ export default defineConfig({
           // dynamic-imported and most sessions never execute them, yet
           // precaching forces every visitor to download them on install and
           // re-download on every release (content hashes change). Excluding
-          // them cuts the precache from ~2.2 MB to ~0.85 MB; the runtime
+          // them avoids precaching these optional loads. The all-backend
+          // storage shell stays cached (see scripts/check-precache-budget.mjs).
+          // The runtime
           // CacheFirst route below still makes them offline-available after
           // first use (hashed filenames are immutable, so CacheFirst is safe).
           'assets/transformers-*.js',

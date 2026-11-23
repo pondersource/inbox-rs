@@ -75,6 +75,14 @@ After `npm run build`, the web app output in `packages/web/dist/` includes:
 
 That makes the built `dist/` folder self-contained for static hosting.
 
+After building, run `npm run check:precache --workspace=@inbox-rs/web` to
+check the offline app-shell budget. The all-backend storage preview measures
+2060 KiB, including its 1101 KiB storage chunk; the limit is 2.25 MiB
+(2304 KiB). The storage code remains precached for offline guest use and
+provider selection. Transformers, MarkdownEditor and model assets keep their
+existing lazy-loading/cache behavior. The remaining 244 KiB headroom is small
+enough to catch either large optional JavaScript chunk entering the precache.
+
 ## Releasing
 
 ```bash
