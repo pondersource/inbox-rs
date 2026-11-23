@@ -7,16 +7,19 @@
  * silent — a single eager import of a heavy module can quietly re-inflate it.
  * Run after `vite build` in packages/web.
  *
- * Budget rationale: the Solid-enabled rs.js build includes its authentication
- * and pod SDKs, bringing the app shell to about 1.5 MiB. A 1.7 MiB budget
- * covers those required offline dependencies while still catching accidental
- * precaching of the lazy transformers/MarkdownEditor chunks.
+ * Budget rationale: the all-backend rs.js/widget preview includes the Solid,
+ * LWS, OneDrive and NextGraph SDKs in the offline app shell. Its measured
+ * precache is 2060 KiB (including the 1101 KiB stores chunk). A 2.25 MiB cap
+ * leaves about 244 KiB for shell changes, while still rejecting either the
+ * lazy transformers or MarkdownEditor chunk being accidentally precached.
+ * Keep the storage shell cached so guest data and provider selection work
+ * offline; do not exclude the stores chunk to satisfy this guard.
  */
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const BUDGET_BYTES = 1.7 * 1024 * 1024;
+const BUDGET_BYTES = 2.25 * 1024 * 1024;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const swPath = path.resolve(__dirname, '../packages/web/dist/sw.js');
