@@ -54,6 +54,8 @@ jobs:
       - name: Build web app
         run: npm run build
 
+      - run: cp -R atomic packages/web/dist/
+
       - name: Add custom domain CNAME
         # Required for GitHub Pages to serve the custom domain when the site
         # is published via the Actions deployment method (unlike the "deploy

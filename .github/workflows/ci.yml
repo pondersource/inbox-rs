@@ -119,6 +119,7 @@ jobs:
         run: npm run build --workspace=packages/rs-module
 
       - run: npm test
+      - run: node --test tests/atomic/inbox.test.cjs
 
   e2e:
     name: End-to-end (PWA)
