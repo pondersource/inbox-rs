@@ -333,6 +333,7 @@ if (typeof window !== 'undefined' && typeof indexedDB !== 'undefined') {
 // the IDB feature init.
 await detectAndRecoverCorruptDb();
 
+RemoteStorage.Atomic.loadSDK = () => import(/* @vite-ignore */ new URL('/atomic-sdk/index.mjs', window.location.origin).href);
 const rs = new RemoteStorage({
   modules: [InboxModule, withPublicLinks(SharesModule)],
   changeEvents: { local: true, window: false, remote: true, conflict: true },
