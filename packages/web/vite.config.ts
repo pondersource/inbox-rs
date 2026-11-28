@@ -48,6 +48,7 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,png,svg,webmanifest,wasm}'],
         globIgnores: [
           'ml/**/*',
+          'atomic-sdk/**/*',
           // Lazy-only heavyweights (~1.4 MB minified combined). They're
           // dynamic-imported and most sessions never execute them, yet
           // precaching forces every visitor to download them on install and
