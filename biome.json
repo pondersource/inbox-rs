@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**", "!packages/web/public/atomic-sdk/**"]
+    "includes": ["**", "!packages/web/public/atomic-sdk"]
   },
   "html": {
     "experimentalFullSupportEnabled": true
